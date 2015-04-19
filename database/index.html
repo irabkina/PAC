@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<?php
+// remove all session variables
+session_unset(); 
+
+// destroy the session 
+session_destroy(); 
+?>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Welcome to the PAC Lab</title>
+	<link rel="stylesheet" href=>
+  </head>
+  <body>
+    <h1>Welcome to the PAC Lab!</h1>
+    <p>Please log in</p>
+    <!--<?php if (isset($loginError)): ?>
+      <p><?php htmlout($loginError); ?></p>
+    <?php endif; ?>-->
+    <form action="getUser.php" method="post" class="login">
+      <p>
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username">
+    </p>
+
+    <p>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password">
+    </p>
+	  <p>
+		
+      <p class="login-submit">
+      <button type="submit" class="login-button">Login</button>
+    </p>
+
+    </form>
+  </body>
+</html>
+
+
+

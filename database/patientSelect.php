@@ -39,6 +39,11 @@ if (isset($_POST['patId']))
  
 }
 
+else if (isset($_SESSION['patid']))
+{
+	include("displayPlots.js");
+}
+
 
 ?>
 

@@ -8,10 +8,14 @@ session_start();
 //require_once 'api.password.php';
 
 //connect to the DB
-$dbName = "as_2a1e9dcfd6f405c";
-  $dbHost = "us-cdbr-azure-west-a.cloudapp.net";
-  $dbUser = "b682c0769dbd11";
-  $dbPass = "696d3bff";
+// $dbName = "as_2a1e9dcfd6f405c";
+//   $dbHost = "us-cdbr-azure-west-a.cloudapp.net";
+//   $dbUser = "b682c0769dbd11";
+//   $dbPass = "696d3bff";
+$dbName = "PACMySQLDatabase";
+  $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
+  $dbUser = "b125155e5e1df5";
+  $dbPass = "bba28a8d";
 
 $db = new mysqli( $dbHost, $dbUser, $dbPass, $dbName );
 

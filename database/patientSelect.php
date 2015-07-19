@@ -34,6 +34,7 @@ if( !$result ) {
 
 if (isset($_POST['patId']))
 {
+	$_SESSION['patid']=$_POST['patId'];
    include("displayPlots.js");
  
 }

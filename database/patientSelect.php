@@ -32,18 +32,6 @@ if( !$result ) {
 	die( "There was a problem executing the SQL query. MySQL error returned: {$db->error} (Error #{$db->errno})" );
 }
 
-if (isset($_POST['patId']))
-{
-	$_SESSION['patid']=$_POST['patId'];
-   include("displayPlots.js");
- 
-}
-
-else if (isset($_SESSION['patid']))
-{
-	include("displayPlots.js");
-}
-
 
 ?>
 
@@ -55,6 +43,7 @@ else if (isset($_SESSION['patid']))
 	<link rel="stylesheet" href="css/style.css">
   </head>
   <body>
+  </br>
   	<h1>View Patient Data</h1>
   	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login">
       <p>Patient ID:
@@ -70,4 +59,16 @@ else if (isset($_SESSION['patid']))
       <button type="submit" class="login-button">Select</button>
     </p>
 	</body>
+<?php
+if (isset($_POST['patId']))
+{
+	$_SESSION['patid']=$_POST['patId'];
+   include("displayPlots.js");
+ 
+}
 
+else if (isset($_SESSION['patid']))
+{
+	include("displayPlots.js");
+}
+?>

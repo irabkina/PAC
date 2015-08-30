@@ -12,10 +12,10 @@ session_start();
 //   $dbHost = "us-cdbr-azure-west-a.cloudapp.net";
 //   $dbUser = "b682c0769dbd11";
 //   $dbPass = "696d3bff";
+$dbHost = "us-cdbr-azure-central-a.cloudapp.net";
+$dbUser = "b125155e5e1df5";
+$dbPass = "bba28a8d";
 $dbName = "PACMySQLDatabase";
-  $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
-  $dbUser = "b125155e5e1df5";
-  $dbPass = "bba28a8d";
 
 $db = new mysqli( $dbHost, $dbUser, $dbPass, $dbName );
 
@@ -38,7 +38,7 @@ else{
 	$userId = $_SESSION['userId'];
 	$query= "SELECT * FROM {$userTable} WHERE ID='{$userId}'";
 }
-
+//echo $query;
 //try to login
 $result = $db->query( $query );
 if( !$result ) {

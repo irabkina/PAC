@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-
+	
 	<?php include 'dataGrabber.php'; ?>		
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -110,38 +110,39 @@
 				}
 			},
 			xaxis: {
-				mode: "time"
+				mode: "time",
+				timezone: "browser"
 			},
 			selection: {
-				mode: "xy"
+				mode: "x"
 			}
 		};
 
 			 
 		var plot = $.plot("#placeholder", startData, options);
 
-		var overview = $.plot("#overview", startData, {
-				legend: {
-					show: false
-				},
-				series: {
-					lines: {
-						show: true,
-						lineWidth: 1
-					},
-					shadowSize: 0
-				},
-				xaxis: {
-					mode: "time",
-					ticks: false
-				},
-				grid: {
-					color: "#999"
-				},
-				selection: {
-					mode: "xy"
-				}
-			});
+		// var overview = $.plot("#overview", startData, {
+		// 		legend: {
+		// 			show: false
+		// 		},
+		// 		series: {
+		// 			lines: {
+		// 				show: true,
+		// 				lineWidth: 1
+		// 			},
+		// 			shadowSize: 0
+		// 		},
+		// 		xaxis: {
+		// 			mode: "time",
+		// 			ticks: false
+		// 		},
+		// 		grid: {
+		// 			color: "#999"
+		// 		},
+		// 		selection: {
+		// 			mode: "xy"
+		// 		}
+		// 	});
 
 		
 		var labelPlot = $.plot("#labels", startLabels , 
@@ -165,55 +166,79 @@
 				show:false
 			},
 			selection:{
-				mode:'xy'
+				mode:"x"
 			}
 		}
 			);
 
-
+		var startTime="00:00:00";
+		var endTime="00:00:00";
+		// Select to create label
 		$("#placeholder").bind("plotselected", function (event, ranges) {
+			var start = new Date(ranges.xaxis.from);
+			var end = new Date (ranges.xaxis.to);
 
-			// clamp the zooming to prevent eternal zoom
-
-			if (ranges.xaxis.to - ranges.xaxis.from < 0.00001) {
-				ranges.xaxis.to = ranges.xaxis.from + 0.00001;
-			}
-
-			if (ranges.yaxis.to - ranges.yaxis.from < 0.00001) {
-				ranges.yaxis.to = ranges.yaxis.from + 0.00001;
-			}
-
-			// add a little space for spacing
-			ranges.xaxis.to = ranges.xaxis.to + 0.10;
-			ranges.xaxis.from = ranges.xaxis.from + 0.10;
-			ranges.yaxis.to = ranges.yaxis.to + 0.10;
-			ranges.yaxis.from = ranges.yaxis.from + 0.10;
-
-			// do the zooming
-
-			plot = $.plot("#placeholder", getData(ranges.xaxis.from, ranges.xaxis.to),
-				$.extend(true, {}, options, {
-					xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to},
-					yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to}
-				})
-			);
-
-			// don't fire event on the overview to prevent eternal loop
-
-			overview.setSelection(ranges, true);
-			labelPlot.setSelection(ranges, true);
+			var sHours = "0"+start.getHours();
+			
+			var sMinutes = "0"+start.getMinutes();
+			
+			var sSeconds = "0"+start.getSeconds();
+			
+			var eHours = "0"+end.getHours();
+			
+			var eMinutes = "0"+end.getMinutes();
+			
+			var eSeconds = "0"+end.getSeconds();
+			
+			startTime = sHours.substr(-2) + ":" + sMinutes.substr(-2) + ":" + sSeconds.substr(-2);
+			endTime = eHours.substr(-2) +  ":" + eMinutes.substr(-2) + ":" + eSeconds.substr(-2);
+			
+			
 		});
+		
+		// $("#placeholder").bind("plotselected", function (event, ranges) {
 
-		$("#overview").bind("plotselected", function (event, ranges) {
-			plot.setSelection(ranges);
-			labelPlot.setSelection(ranges);
-		});
+		// 	// clamp the zooming to prevent eternal zoom
+
+		// 	if (ranges.xaxis.to - ranges.xaxis.from < 0.00001) {
+		// 		ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+		// 	}
+
+		// 	if (ranges.yaxis.to - ranges.yaxis.from < 0.00001) {
+		// 		ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+		// 	}
+
+		// 	// add a little space for spacing
+		// 	ranges.xaxis.to = ranges.xaxis.to + 0.10;
+		// 	ranges.xaxis.from = ranges.xaxis.from + 0.10;
+		// 	ranges.yaxis.to = ranges.yaxis.to + 0.10;
+		// 	ranges.yaxis.from = ranges.yaxis.from + 0.10;
+
+		// 	// do the zooming
+
+		// 	plot = $.plot("#placeholder", getData(ranges.xaxis.from, ranges.xaxis.to),
+		// 		$.extend(true, {}, options, {
+		// 			xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to},
+		// 			yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to}
+		// 		})
+		// 	);
+
+		// 	// don't fire event on the overview to prevent eternal loop
+
+		// 	//overview.setSelection(ranges, true);
+		// 	labelPlot.setSelection(ranges, true);
+		// });
+
+		// $("#overview").bind("plotselected", function (event, ranges) {
+		// 	plot.setSelection(ranges);
+		// 	labelPlot.setSelection(ranges);
+		// });
 
 		$("#labels").bind("plotselected", function (event, ranges) {
 
 			// don't fire event on the overview to prevent eternal loop
 
-			overview.setSelection(ranges, true);
+			//overview.setSelection(ranges, true);
 			plot.setSelection(ranges), true;
 		});
 
@@ -297,6 +322,13 @@ function toggleAutoRefresh(cb) {
 // 			$overview.draw();
 // 		};
 
+<?php
+	if(isset($_POST['startTime']) && isset($_POST['endTime']) && isset($_POST['activity'])){
+		$request = "";
+	}
+?>
+
+
 window.onload=checkReloading;
 
 	</script>
@@ -305,21 +337,42 @@ window.onload=checkReloading;
 </head>
 <body>
 
-	<div id="header">
+<div id="header">
 		<h2>Accelerometer</h2>
 		<input type="checkbox" onclick="toggleAutoRefresh(this);" id="refresh">Recording</input>
 	</div>
+
+	
 
 	<div id="content">
 
 		
 		<div class="container">
 			<div id="placeholder" class="placeholder" style="float:left; width:650px;"></div>
-			<div id="overview" class="placeholder" style="float:right;width:160px; height:125px;"></div>
+			<!--//div id="overview" class="placeholder" style="float:right;width:160px; height:125px;"></div-->
+			<div id="label_select" style="float:right;width:160px; height:125px;">
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login">
+			<p>Label:
+			<select name="activity" id="activity">
+				<option>inactive</option>
+				<option>low activity</option>
+				<option>medium activity</option>
+				<option>high activity</option>
+		</select>
+		<p>
+			<label for="x-start">Start Time:</label>
+			<input type="time" name="x-start" id="start" size="15" type="time" value="{startTime}">
+			<label for="x-end">End Time:</label>
+			<input type="time" name="x-end" id="end" size="15" value="{endTime}">
+		<p class="select-submit">
+      <button type="save" class="save-button">Save</button>
+    </p>
+			</div>
 		</div>
 		<div class="container" style="margin-top: -30px; height:130px">
 			<div id="labels" class="placeholder" style="margin-top: -20px; float:left;width:650px;height:125px;"></div>
 		</div>
+
 
 	</div>
 

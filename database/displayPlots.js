@@ -161,6 +161,7 @@
 			},
 			xaxis: {
 				mode: "time",
+				timezone: "browser"
 			},
 			yaxis: {
 				show:false
@@ -171,8 +172,7 @@
 		}
 			);
 
-		var startTime="00:00:00";
-		var endTime="00:00:00";
+		
 		// Select to create label
 		$("#placeholder").bind("plotselected", function (event, ranges) {
 			var start = new Date(ranges.xaxis.from);
@@ -190,49 +190,16 @@
 			
 			var eSeconds = "0"+end.getSeconds();
 			
-			startTime = sHours.substr(-2) + ":" + sMinutes.substr(-2) + ":" + sSeconds.substr(-2);
-			endTime = eHours.substr(-2) +  ":" + eMinutes.substr(-2) + ":" + eSeconds.substr(-2);
+			var startTime = sHours.substr(-2) + ":" + sMinutes.substr(-2) + ":" + sSeconds.substr(-2);
+			var endTime = eHours.substr(-2) +  ":" + eMinutes.substr(-2) + ":" + eSeconds.substr(-2);
 			
+
+			document.getElementById('start').value = startTime;
+			document.getElementById('end').value = endTime;
 			
 		});
 		
-		// $("#placeholder").bind("plotselected", function (event, ranges) {
-
-		// 	// clamp the zooming to prevent eternal zoom
-
-		// 	if (ranges.xaxis.to - ranges.xaxis.from < 0.00001) {
-		// 		ranges.xaxis.to = ranges.xaxis.from + 0.00001;
-		// 	}
-
-		// 	if (ranges.yaxis.to - ranges.yaxis.from < 0.00001) {
-		// 		ranges.yaxis.to = ranges.yaxis.from + 0.00001;
-		// 	}
-
-		// 	// add a little space for spacing
-		// 	ranges.xaxis.to = ranges.xaxis.to + 0.10;
-		// 	ranges.xaxis.from = ranges.xaxis.from + 0.10;
-		// 	ranges.yaxis.to = ranges.yaxis.to + 0.10;
-		// 	ranges.yaxis.from = ranges.yaxis.from + 0.10;
-
-		// 	// do the zooming
-
-		// 	plot = $.plot("#placeholder", getData(ranges.xaxis.from, ranges.xaxis.to),
-		// 		$.extend(true, {}, options, {
-		// 			xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to},
-		// 			yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to}
-		// 		})
-		// 	);
-
-		// 	// don't fire event on the overview to prevent eternal loop
-
-		// 	//overview.setSelection(ranges, true);
-		// 	labelPlot.setSelection(ranges, true);
-		// });
-
-		// $("#overview").bind("plotselected", function (event, ranges) {
-		// 	plot.setSelection(ranges);
-		// 	labelPlot.setSelection(ranges);
-		// });
+		
 
 		$("#labels").bind("plotselected", function (event, ranges) {
 
@@ -249,19 +216,16 @@
 
 	
 
-	// if(typeof recording=='undefined'){
-	// 	var recording=false;
-	// }
-	// if(recording!=null && recording){
-	// 	echo('<meta http-equiv="refresh" content="5">');
-	// }
-
 var reloading;
 
 function checkReloading() {
     if (window.location.hash=="#autoreload") {
         reloading=setTimeout("window.location.reload();", 5000);
         document.getElementById("refresh").checked=true;
+        activity.disabled=true;
+        start.disabled=true;
+        end.disabled=true;
+        save.disabled=true;
     }
 }
 
@@ -269,64 +233,23 @@ function toggleAutoRefresh(cb) {
     if (cb.checked) {
         window.location.replace("#autoreload");
         reloading=setTimeout("window.location.reload();", 1000);
+
     } else {
         window.location.replace("#");
         clearTimeout(reloading);
+        activity.disabled=false;
+        start.disabled=false;
+        end.disabled=false;
+        save.disabled=false;
     }
 }
 
-// var updateInterval = 3;
-// 		$("#updateInterval").val(updateInterval).change(function () {
-// 			var v = $(this).val();
-// 			if (v && !isNaN(+v)) {
-// 				updateInterval = +v;
-// 				if (updateInterval < 1) {
-// 					updateInterval = 1;
-// 				} else if (updateInterval > 2000) {
-// 					updateInterval = 2000;
-// 				}
-// 				$(this).val("" + updateInterval);
-// 			}
-// 		});
 
-// function getOutput() {
-//   getRequest(
-//       'dataGrabber.php', // URL for the PHP file
-//        update,  // handle successful request
-//        drawError    // handle error
-//   );
-//   return false;
-// } ;
-
-// function drawError() {
-//     var container = document.getElementById('output');
-//     container.innerHTML = 'Bummer: there was an error!';
-// };
-
-// function update() {
-
-// 			var startData = getData(d1[0][0],d1[d1.length-1][0]);
-// 			var startLabels = getLabels(d2[0][0],d2[d2.length-1][1]);
-			
-// 			$plot.setData(startData);
-// 			$plot.setupGrid();
-// 			$plot.draw();
-// 			setTimeout(getOutput, updateInterval);
-
-// 			$labelPlot.setData(startLabels);
-// 			$labelPlot.setupGrid();
-// 			$labelPlot.draw();
-
-// 			$overview.setData(startData);
-// 			$overview.setupGrid();
-// 			$overview.draw();
-// 		};
-
-<?php
-	if(isset($_POST['startTime']) && isset($_POST['endTime']) && isset($_POST['activity'])){
-		$request = "";
-	}
-?>
+// <?php
+// 	if(isset($_POST['startTime']) && isset($_POST['endTime']) && isset($_POST['activity'])){
+// 		$request = "";
+// 	}
+// ?>
 
 
 window.onload=checkReloading;
@@ -351,6 +274,7 @@ window.onload=checkReloading;
 			<div id="placeholder" class="placeholder" style="float:left; width:650px;"></div>
 			<!--//div id="overview" class="placeholder" style="float:right;width:160px; height:125px;"></div-->
 			<div id="label_select" style="float:right;width:160px; height:125px;">
+			
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login">
 			<p>Label:
 			<select name="activity" id="activity">
@@ -361,11 +285,11 @@ window.onload=checkReloading;
 		</select>
 		<p>
 			<label for="x-start">Start Time:</label>
-			<input type="time" name="x-start" id="start" size="15" type="time" value="{startTime}">
+			<input type="time" name="x-start" id="start" size="15" type="time" >
 			<label for="x-end">End Time:</label>
-			<input type="time" name="x-end" id="end" size="15" value="{endTime}">
+			<input type="time" name="x-end" id="end" size="15" >
 		<p class="select-submit">
-      <button type="save" class="save-button">Save</button>
+      <button type="save" class="save-button" id="save">Save</button>
     </p>
 			</div>
 		</div>

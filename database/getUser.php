@@ -32,6 +32,7 @@ $userTable = $tablePrefix . "user";
 if(!isset($_SESSION['userId'])){
 	$username = $_POST['username'];
 	$password = $_POST['password'];
+	$datasetId = 0; //TODO: make datasetId a functional thing
 	$query = "SELECT * FROM {$userTable} WHERE Username='{$username}'";
 }
 else{

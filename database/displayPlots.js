@@ -121,29 +121,6 @@
 			 
 		var plot = $.plot("#placeholder", startData, options);
 
-		// var overview = $.plot("#overview", startData, {
-		// 		legend: {
-		// 			show: false
-		// 		},
-		// 		series: {
-		// 			lines: {
-		// 				show: true,
-		// 				lineWidth: 1
-		// 			},
-		// 			shadowSize: 0
-		// 		},
-		// 		xaxis: {
-		// 			mode: "time",
-		// 			ticks: false
-		// 		},
-		// 		grid: {
-		// 			color: "#999"
-		// 		},
-		// 		selection: {
-		// 			mode: "xy"
-		// 		}
-		// 	});
-
 		
 		var labelPlot = $.plot("#labels", startLabels , 
 		{
@@ -244,12 +221,13 @@ function toggleAutoRefresh(cb) {
     }
 }
 
+function predictLabels(){
+	// get all data
+	// exec python file
+	exec('/usr/bin/python2.7 /srv/http/assets/py/switch.py arg1 arg2')
+	// for each result, display  
+}
 
-// <?php
-// 	if(isset($_POST['startTime']) && isset($_POST['endTime']) && isset($_POST['activity'])){
-// 		$request = "";
-// 	}
-// ?>
 
 
 window.onload=checkReloading;
@@ -270,12 +248,12 @@ window.onload=checkReloading;
 	<div id="content">
 
 		
-		<div class="container">
+		<div class="container" position="relative">
 			<div id="placeholder" class="placeholder" style="float:left; width:650px;"></div>
 			<!--//div id="overview" class="placeholder" style="float:right;width:160px; height:125px;"></div-->
 			<div id="label_select" style="float:right;width:160px; height:125px;">
 			
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login">
+			<form action="saveData.php" method="post" class="login" id='form'>
 			<p>Label:
 			<select name="activity" id="activity">
 				<option>inactive</option>
@@ -285,16 +263,22 @@ window.onload=checkReloading;
 		</select>
 		<p>
 			<label for="x-start">Start Time:</label>
-			<input type="time" name="x-start" id="start" size="15" type="time" >
+			<input type="time" name="x-start" id="start" size="15" step=1 >
 			<label for="x-end">End Time:</label>
-			<input type="time" name="x-end" id="end" size="15" >
+			<input type="time" name="x-end" id="end" size="15" step=1>
 		<p class="select-submit">
       <button type="save" class="save-button" id="save">Save</button>
-    </p>
+
+			</form>
+			<p class="select-submit" >
+      <button type="predict" class="save-button" id="predict" onclick="predictLabels()">Predict Labels</button>      
 			</div>
 		</div>
+		
+    </p>
 		<div class="container" style="margin-top: -30px; height:130px">
 			<div id="labels" class="placeholder" style="margin-top: -20px; float:left;width:650px;height:125px;"></div>
+
 		</div>
 
 

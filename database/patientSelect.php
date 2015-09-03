@@ -4,21 +4,6 @@
 
 //require_once 'api.password.php';
 
-//connect to the DB
-// $dbName = "as_2a1e9dcfd6f405c";
-// 	$dbHost = "us-cdbr-azure-west-a.cloudapp.net";
-// 	$dbUser = "b682c0769dbd11";
-// 	$dbPass = "696d3bff";
-// 	$db = new mysqli( $dbHost, $dbUser, $dbPass, $dbName );
-
-// $db = new mysqli( $dbHost, $dbUser, $dbPass, $dbName );
-
-// if( $db->connect_errno )
-//     die( "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error );
-
-// if( !$db->set_charset( "utf8mb4" ) ) {
-//     printf("Error loading character set utf8mb4: %s\n", $db->error);
-// } 
 
 $userid = $_SESSION['userId'];
 
@@ -58,6 +43,7 @@ if( !$result ) {
 		<p class="login-submit">
       <button type="submit" class="login-button">Select</button>
     </p>
+</form>
 	</body>
 <?php
 if (isset($_POST['patId']))

@@ -30,8 +30,9 @@ $tablePrefix = "";
 $userTable = $tablePrefix . "user";
 
 if(!isset($_SESSION['userId'])){
-	$username = $_POST['username'];
+	#$username = $_POST['username'];
 	$password = $_POST['password'];
+	$username="jp";
 	$datasetId = 0; //TODO: make datasetId a functional thing
 	$query = "SELECT * FROM {$userTable} WHERE Username='{$username}'";
 }
@@ -51,7 +52,7 @@ if( !$result->num_rows ) {
 
 	?>
 	<h1>User Does Not Exist</h1>
-    <p>This user does not exist.</p>
+    <p>This user: <?php echo $userId ?> does not exist.</p>
 	<p class="login"><a href="index.html">Try again.</a></p>
 	<?php
 	die();

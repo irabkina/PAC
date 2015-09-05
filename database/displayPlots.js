@@ -22,6 +22,8 @@
 		var d1 = <?php echo json_encode($data); ?>; // the data
 		var d2 = <?php echo json_encode($activityDetails); ?>; // the activity times
 		var d3 = <?php echo json_encode($activityLabels); ?>; // the activity labels
+		var dat = new Date(d1[0][0]).getFullYear() + "-" + ('0' + (new Date(d1[0][0]).getMonth()+1)).slice(-2) + "-" + ('0' + new Date(d1[0][0]).getDate()).slice(-2); // the date
+		document.getElementById('date').value = dat;
 
 		function getData(x1, x2) {
 	
@@ -92,10 +94,19 @@
 			return dfinal;
 		};
 		
-		
-		var startData = getData(d1[0][0],d1[d1.length-1][0]);
+		if(d1.length>0){
+			var startData = getData(d1[0][0],d1[d1.length-1][0]);
+		}
+		else{
+			var startData = [];
+		}
 
-		var startLabels = getLabels(d2[0][0],d2[d2.length-1][1]);
+		if (d2.length>0){
+			var startLabels = getLabels(d2[0][0],d2[d2.length-1][1]);
+		}
+		else{
+			var startLabels = [];
+		}
 
 		var options = {
 			legend: {
@@ -223,9 +234,12 @@ function toggleAutoRefresh(cb) {
 
 function predictLabels(){
 	// get all data
-	// exec python file
-	exec('/usr/bin/python2.7 /srv/http/assets/py/switch.py arg1 arg2')
-	// for each result, display  
+	$.get("backend.php",{param:value},callbackFunction);
+		callbackFunction(data)
+	{
+		alert("No more predictions");
+	}
+	 
 }
 
 
@@ -262,6 +276,8 @@ window.onload=checkReloading;
 				<option>high activity</option>
 		</select>
 		<p>
+			<label for="date">Date: </label>
+			<input id="date" name="date">
 			<label for="x-start">Start Time:</label>
 			<input type="time" name="x-start" id="start" size="15" step=1 >
 			<label for="x-end">End Time:</label>

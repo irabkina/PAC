@@ -234,12 +234,20 @@ function toggleAutoRefresh(cb) {
 
 function predictLabels(){
 	// get all data
-	$.get("backend.php",{param:value},callbackFunction);
-		callbackFunction(data)
-	{
-		alert("No more predictions");
-	}
-	 
+	$.ajax({
+	  	type: "POST",
+	  	url: "predict.php",
+	  	datatype: "html",
+	  	success: function(data) {
+	  		showPredictions(data);
+	    	alert("No more predictions ");
+    	}
+	}) 
+}
+
+function showPredictions(data){
+
+	alert("Show predictions now")
 }
 
 

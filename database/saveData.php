@@ -22,7 +22,7 @@
 	    printf("Error loading character set utf8mb4: %s\n", $db->error);
 	} 
 
-	print_r($_POST);
+	#print_r($_POST);
 
 	$patid = $_SESSION['patid'];
 	$datasetId = 1; //currently not functional
@@ -39,7 +39,7 @@
 	//print_r($_POST);
 	$activity = $_POST['activity'];
 	$startTime = $_POST['date']." ".$_POST['x-start'];
-	print_r($startTime);
+	#print_r($startTime);
 	$endTime = $_POST['date']." ".$_POST['x-end'];
 	
 	$request = "insert into {$activityDatasetTable} (activity, startTime, endTime, datasetId) values ('{$activity}', '{$startTime}','{$endTime}', {$datasetId});" ;

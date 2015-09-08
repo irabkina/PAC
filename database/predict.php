@@ -58,9 +58,9 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	// 	}
 	// }
 
-	$row = $result->fetch_assoc();
-	$start = date('g:i:s',strtotime($row['startTime']));
-		$end = date('g:i:s',strtotime($row['endTime']));
+		$row = $result->fetch_assoc();
+		$start = date('U',strtotime($row['startTime']));
+		$end = date('U',strtotime($row['endTime']));
 		$arr = array($start, $end);
 		$data_mat[] = $arr;
 		if ($row['activity']===null){
@@ -79,7 +79,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	// 	$raw_data[] = $arr2;
 	// }
 	$row2 = $result2->fetch_assoc();
-	$time = date('g:i:s',strtotime($row2['timestamp']));
+	$time = date('U',strtotime($row2['timestamp']));
 	$arr2[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
 	$raw_data[] = $arr2;
 

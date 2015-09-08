@@ -5,14 +5,20 @@ import numpy
 from sklearn.semi_supervised import LabelSpreading
 
 def main(argv):
+	inactive = "inactive"
+	active = "active"
 	#print "inside python script"
 	label_prop_model = LabelSpreading(alpha=0.8, tol=0.7)
 	
 	#TODO: test json decoding and argv index
 	#print "\n data_pre: " + json.loads(argv[0])[0]
-	data_pre = json.dumps(eval(argv[1]))
-	labels_pre = json.loads(eval(argv[2])[0])
-	raw_data = json.loads(eval(argv[3])[0])
+	data_pre = json.loads(json.dumps(eval(argv[1])))
+	#print argv[2]
+	labels_pre = argv[2]
+	#print argv[3]
+	raw_data = json.loads(json.dumps(eval(argv[3])[0]))
+	#print type(raw_data)
+	print raw_data
 
 	data_post = {} # dict of all preprocessed data ts[]:(average x,y,z and standard of deviation)
 	labels_post = [] # list of labels corresponding to data in data_post
@@ -23,17 +29,21 @@ def main(argv):
 	i=0
 	while i < len(raw_data.keys()):
 		curr_five = []
-		dat = raw_data.keys[i]
+		dat = int(raw_data.keys()[i])
+		#print type(dat)
+		#print dat
 		count=0
-		for curr_dat in raw_data.keys():
+		for curr_dat_u in raw_data.keys():
+			curr_dat=int(curr_dat_u)
 			if dat<=curr_dat and dat+5>=curr_dat: #NOTE: timestamps, so the add 5 might not work
 				curr_five.append(curr_dat)
 				count+=1
-		five_sec.append(curr_dat)
+		five_sec.append([curr_dat_u])
 		i+=count
 
 	# get the data
 	for five in five_sec:
+		print five
 		xl = [] # list of x accelerations
 		yl = [] # list of y accelerations
 		zl = [] # list of z accelerations

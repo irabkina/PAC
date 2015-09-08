@@ -279,9 +279,7 @@ window.onload=checkReloading;
 			<p>Label:
 			<select name="activity" id="activity">
 				<option>inactive</option>
-				<option>low activity</option>
-				<option>medium activity</option>
-				<option>high activity</option>
+				<option>active</option>
 		</select>
 		<p>
 			<label for="date">Date: </label>

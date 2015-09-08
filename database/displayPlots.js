@@ -65,14 +65,15 @@
 				if(Date(d2[x][0])>=Date(x1) && Date(d2[x][1])<=Date(x2)){
 					//d.push([new Date(d2[x][0]).getTime(),0]); // straight line
 					//d.push([new Date(d2[x][1]).getTime(),0]); // straight line
-					if(d3[x]=='low activity'){
-						dactive_low.push([new Date(d2[x][0]).getTime(),0]);
-						dactive_low.push([new Date(d2[x][1]).getTime(),0]);
-					}
-					if(d3[x]=='medium activity'){
-						dactive_med.push([new Date(d2[x][0]).getTime(),0]);
-						dactive_med.push([new Date(d2[x][1]).getTime(),0]);
-					}if(d3[x]=='high activity'){
+					// if(d3[x]=='low activity'){
+					// 	dactive_low.push([new Date(d2[x][0]).getTime(),0]);
+					// 	dactive_low.push([new Date(d2[x][1]).getTime(),0]);
+					// }
+					// if(d3[x]=='medium activity'){
+					// 	dactive_med.push([new Date(d2[x][0]).getTime(),0]);
+					// 	dactive_med.push([new Date(d2[x][1]).getTime(),0]);
+					//	}
+					if(d3[x]=='active'){
 						dactive_high.push([new Date(d2[x][0]).getTime(),0]);
 						dactive_high.push([new Date(d2[x][1]).getTime(),0]);
 					}
@@ -85,9 +86,9 @@
 				
 			}
 
-			dfinal.push({label:'low activity', color:4, data: dactive_low});
-			dfinal.push({label:'medium activity', color:5, data: dactive_med});
-			dfinal.push({label:'high activity', color:6, data: dactive_high});
+			//dfinal.push({label:'low activity', color:4, data: dactive_low});
+			dfinal.push({label:'active', color:5, data: dactive_high});
+			//dfinal.push({label:'high activity', color:6, data: dactive_high});
 			dfinal.push({label: 'inactive', color:7, data:dinactive});
 			
 
@@ -217,6 +218,17 @@ function checkReloading() {
     }
 }
 
+var predicting=false;
+function checkPredictions() {
+    if (!predicting){
+    	prediction.disabled=true;
+    }
+    else{
+    	prediction.disabled=false;
+    }
+    
+}
+
 function toggleAutoRefresh(cb) {
     if (cb.checked) {
         window.location.replace("#autoreload");
@@ -239,20 +251,43 @@ function predictLabels(){
 	  	url: "predict.php",
 	  	datatype: "html",
 	  	success: function(data) {
-	  		showPredictions(data);
+	  		predictions(data);
 	    	alert("No more predictions ");
     	}
 	}) 
 }
 
-function showPredictions(data){
+var predictions;
+function predictions(data){
+	predicting = true;
+	predictions = json_decode(data);
 
-	alert("Show predictions now")
+}
+
+function predictLabels(){
+	if(predictions.length>1){
+		document.getElementById('start').value = predictions[0][0][0];
+		document.getElementById('end').value = predictions[0][4][1];
+		document.getElementById('activity').value = predictions[1][0];
+		predictions = predictions.slice(1);
+
+	}
+	else if (predictions.length==1){
+		document.getElementById('start').value = predictions[0][0][0];
+		document.getElementById('end').value = predictions[0][4][1];
+		document.getElementById('activity').value = predictions[1][0];
+		predictions=array();
+	}
+	else{
+		alert("No more predictions available");
+		predictions=false;
+	}
+	
 }
 
 
-
 window.onload=checkReloading;
+window.onload=checkPredictions;
 
 	</script>
 	<?php session_write_close() ?>
@@ -290,7 +325,8 @@ window.onload=checkReloading;
 			<input type="time" name="x-end" id="end" size="15" step=1>
 		<p class="select-submit">
       <button type="save" class="save-button" id="save">Save</button>
-
+      <p class="select-submit">
+      <button type="save" class="save-button" id="prediction" onclick="showPrediction()" disabled>Next Prediction</button>
 			</form>
 			<p class="select-submit" >
       <button type="predict" class="save-button" id="predict" onclick="predictLabels()">Predict Labels</button>      

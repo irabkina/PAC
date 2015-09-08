@@ -37,7 +37,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	}
 	$query2 = "select * from {$dataTable} where ID={$datasetId}";
 	$result2 = $db->query( $query2 );
-	if( !$result ) {
+	if( !$result2 ) {
 	//an error occured
 	die( "There was a problem executing the SQL query. MySQL error returned: {$db->error} (Error #{$db->errno})" );
 }
@@ -45,22 +45,9 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	$data_mat = array();
 	$labels = array();
 	
-	// foreach($result as $row){
-	// 	$start = date('g:i:s',strtotime($row['startTime']));
-	// 	$end = date('g:i:s',strtotime($row['endTime']));
-	// 	$arr = array($start, $end);
-	// 	$data_mat[] = $arr;
-	// 	if ($row['activity']===null){
-	// 		$labels[] = -1;	
-	// 	}
-	// 	else{
-	// 		$labels[]=$row['activity'];
-	// 	}
-	// }
-
-		$row = $result->fetch_assoc();
+	foreach($result as $row){
 		$start = date('U',strtotime($row['startTime']));
-		$end = date('U',strtotime($row['endTime']));
+		$end = date('U',strtotime($row['endTime']));;
 		$arr = array($start, $end);
 		$data_mat[] = $arr;
 		if ($row['activity']===null){
@@ -69,20 +56,18 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 		else{
 			$labels[]=$row['activity'];
 		}
+	}
+
+	
 
 	// get raw data
 	$raw_data = array();
-	// foreach($result2 as $row2){
-	// 	print_r($row2);
-	// 	$time = date('g:i:s',$row2['timestamp']);
-	// 	$arr2[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
-	// 	$raw_data[] = $arr2;
-	// }
-	$row2 = $result2->fetch_assoc();
-	$time = date('U',strtotime($row2['timestamp']));
-	$arr2[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
-	$raw_data[] = $arr2;
-
+	foreach($result2 as $row2){
+		print_r($row2);
+		$time = date('U',strtotime($row2['timestamp']));
+		$arr2[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
+		$raw_data[] = $arr2;
+	}
 
 	$data_mat_j = json_encode($data_mat);
 	$labels_j = json_encode($labels);
@@ -96,7 +81,5 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	echo $output;
 	//print_r("Prediction complete. Suggestions will appear in labeling box.");
 	//return $output;
-
-	// for each result, display (NOTE: #output is a string)
 
 	?>

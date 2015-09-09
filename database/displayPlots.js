@@ -63,16 +63,7 @@
 				var d = [];
 
 				if(Date(d2[x][0])>=Date(x1) && Date(d2[x][1])<=Date(x2)){
-					//d.push([new Date(d2[x][0]).getTime(),0]); // straight line
-					//d.push([new Date(d2[x][1]).getTime(),0]); // straight line
-					// if(d3[x]=='low activity'){
-					// 	dactive_low.push([new Date(d2[x][0]).getTime(),0]);
-					// 	dactive_low.push([new Date(d2[x][1]).getTime(),0]);
-					// }
-					// if(d3[x]=='medium activity'){
-					// 	dactive_med.push([new Date(d2[x][0]).getTime(),0]);
-					// 	dactive_med.push([new Date(d2[x][1]).getTime(),0]);
-					//	}
+					
 					if(d3[x]=='active'){
 						dactive_high.push([new Date(d2[x][0]).getTime(),0]);
 						dactive_high.push([new Date(d2[x][1]).getTime(),0]);
@@ -257,30 +248,33 @@ function predictLabels(){
 	}) 
 }
 
-var predictions;
+var preds;
 function predictions(data){
+	//alert(preds);
 	predicting = true;
-	predictions = json_decode(data);
+	preds = data;
+	//alert(preds);
 
 }
 
-function predictLabels(){
-	if(predictions.length>1){
+function showPrediction(){
+	alert(preds);
+	if(preds.length>1){
 		document.getElementById('start').value = predictions[0][0][0];
 		document.getElementById('end').value = predictions[0][4][1];
 		document.getElementById('activity').value = predictions[1][0];
-		predictions = predictions.slice(1);
+		preds = preds.slice(1);
 
 	}
-	else if (predictions.length==1){
+	else if (preds.length==1){
 		document.getElementById('start').value = predictions[0][0][0];
 		document.getElementById('end').value = predictions[0][4][1];
 		document.getElementById('activity').value = predictions[1][0];
-		predictions=array();
+		preds=array();
 	}
 	else{
 		alert("No more predictions available");
-		predictions=false;
+		predicting=false;
 	}
 	
 }

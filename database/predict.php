@@ -29,13 +29,13 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	$activityTable = $tablePrefix . "activity";
 	
 
-	$query = "select * from {$activityDatasetTable} where datasetId={$datasetId}";
+	$query = "select * from {$activityDatasetTable} where datasetId in (select id from {$datasetTable} where patientId={$patid})";
 	$result = $db->query( $query );
 	if( !$result ) {
 	//an error occured
 	die( "There was a problem executing the SQL query. MySQL error returned: {$db->error} (Error #{$db->errno})" );
 	}
-	$query2 = "select * from {$dataTable} where ID={$datasetId}";
+	$query2 = "select * from {$dataTable} where patientId={$patid}";
 	$result2 = $db->query( $query2 );
 	if( !$result2 ) {
 	//an error occured
@@ -45,16 +45,19 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	$data_mat = array();
 	$labels = array();
 	
+	#print_r($result);
 	foreach($result as $row){
+		#print_r("kjsalkjdf;aksfaskd");
+		#print_r($row);
 		$start = date('U',strtotime($row['startTime']));
 		$end = date('U',strtotime($row['endTime']));;
 		$arr = array($start, $end);
-		$data_mat[] = $arr;
+		array_push($data_mat, $arr);
 		if ($row['activity']===null){
-			$labels[] = -1;	
+			array_push($labels,-1);	
 		}
 		else{
-			$labels[]=$row['activity'];
+			array_push($labels,$row['activity']);
 		}
 	}
 
@@ -63,10 +66,11 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	// get raw data
 	$raw_data = array();
 	foreach($result2 as $row2){
-		print_r($row2);
+		#print_r($row2);
 		$time = date('U',strtotime($row2['timestamp']));
-		$arr2[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
-		$raw_data[] = $arr2;
+		$raw_data[$time] = array($row2['accelerometer_x_CAL'], $row2['accelerometer_y_CAL'], $row2['accelerometer_z_CAL']);
+		#$raw_data[] = $arr2;
+		#print_r(count($raw_data));
 	}
 
 	$data_mat_j = json_encode($data_mat);
@@ -81,5 +85,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	echo $output;
 	//print_r("Prediction complete. Suggestions will appear in labeling box.");
 	//return $output;
+
+	// for each result, display (NOTE: #output is a string)
 
 	?>

@@ -53,11 +53,14 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 		$end = date('U',strtotime($row['endTime']));;
 		$arr = array($start, $end);
 		array_push($data_mat, $arr);
-		if ($row['activity']===null){
-			array_push($labels,-1);	
+		if ($row['activity']==='inactive'){
+			array_push($labels,0);	
+		}
+		else if ($row['activity']==='active'){
+			array_push($labels,1);
 		}
 		else{
-			array_push($labels,$row['activity']);
+			array_push($labels,-1);
 		}
 	}
 

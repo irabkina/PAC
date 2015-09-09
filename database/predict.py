@@ -95,16 +95,16 @@ def main(argv):
 	#print "labels_post length: " + str(len(labels_post))
 	#print "data_post length: " + str(len(data_post.values()))
 	data_train = numpy.array(data_post.values())
-	print type(data_train)
-	labels_train = numpy.array(labels_post)
-	print type(labels_train)
+	print data_train.shape
+	labels_train = numpy.array(labels_post).reshape(len(labels_post),1)
+	print labels_train.shape
 	data_test = numpy.array(unlabeled_post.values())
 	
 	label_prop_model.fit(data_train, labels_train)
 	# predict unlabeled points
 	labels_predicted = label_prop_model.predict(data_test)
 	return_ls = [unlabeled_post.keys(),labels_predicted]
-	return json.encode(return_ls)
+	return json.dumps(return_ls)
 
 if __name__ == "__main__":
    main(sys.argv)

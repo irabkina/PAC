@@ -8,12 +8,12 @@ def main(argv):
 	inactive = "inactive"
 	active = "active"
 	#print "inside python script"
-	label_prop_model = LabelSpreading(alpha=0.8, tol=0.7)
+	label_prop_model = LabelSpreading(alpha=0.8, tol=0.7, gamma=0.5)
 	
 	#TODO: test json decoding and argv index
 	#print "\n data_pre: " + json.loads(argv[0])[0]
 	data_pre = json.loads(json.dumps(eval(argv[1])))
-	print argv[2]
+	#print argv[2]
 	labels_pre = eval(argv[2])
 	#print argv[3]
 	raw_data = json.loads(json.dumps(eval(argv[3])))
@@ -56,7 +56,7 @@ def main(argv):
 		xl = [] # list of x accelerations
 		yl = [] # list of y accelerations
 		zl = [] # list of z accelerations
-		print "five: " + str(five)
+		#print "five: " + str(five)
 		tup = tuple(five)
 
 		# get averages and standards of deviation
@@ -68,7 +68,7 @@ def main(argv):
 			yl.append(raw[1])
 			zl.append(raw[2])
 			dats = [numpy.mean(xl), numpy.mean(yl), numpy.mean(zl),numpy.std(xl),numpy.std(yl),numpy.std(zl)]
-		print "assigning data_post " + str(tup)
+		#print "assigning data_post " + str(tup)
 		data_post[tup] = dats
 
 		# get label
@@ -95,16 +95,32 @@ def main(argv):
 	#print "labels_post length: " + str(len(labels_post))
 	#print "data_post length: " + str(len(data_post.values()))
 	data_train = numpy.array(data_post.values())
-	print data_train.shape
-	labels_train = numpy.array(labels_post).reshape(len(labels_post),1)
-	print labels_train.shape
+	#print data_train.shape
+	labels_train = numpy.array(labels_post)
+	#print labels_train.shape
 	data_test = numpy.array(unlabeled_post.values())
 	
 	label_prop_model.fit(data_train, labels_train)
 	# predict unlabeled points
-	labels_predicted = label_prop_model.predict(data_test)
-	return_ls = [unlabeled_post.keys(),labels_predicted]
-	return json.dumps(return_ls)
+	labels_predicted = (label_prop_model.predict(data_test)).tolist()
+	#print labels_predicted
+	labels_pred_final=[]
+	unlabeled_post_final=[]
+
+	for l in labels_predicted:
+		if l==0:
+			labels_pred_final.append("inactive")
+		elif l==1:
+			labels_pred_final.append("active")
+		else:
+			labels_pred_final.append("None")
+
+	for ul in unlabeled_post.keys():
+		unlabeled_post_final.append(json.dumps(ul))
+
+	return_ls = [json.dumps(unlabeled_post_final),json.dumps(labels_pred_final)]
+	print json.dumps(return_ls)
+	#return json.dumps(return_ls)
 
 if __name__ == "__main__":
    main(sys.argv)

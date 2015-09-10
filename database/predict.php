@@ -85,6 +85,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	//print_r("command is: ".$command);
 	$output = shell_exec(escapeshellcmd($command). ' 2>&1');
 
+	//print_r($output);
 	echo $output;
 	//print_r("Prediction complete. Suggestions will appear in labeling box.");
 	//return $output;

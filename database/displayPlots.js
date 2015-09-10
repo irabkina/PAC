@@ -209,16 +209,6 @@ function checkReloading() {
     }
 }
 
-var predicting=false;
-function checkPredictions() {
-    if (!predicting){
-    	prediction.disabled=true;
-    }
-    else{
-    	prediction.disabled=false;
-    }
-    
-}
 
 function toggleAutoRefresh(cb) {
     if (cb.checked) {
@@ -235,6 +225,7 @@ function toggleAutoRefresh(cb) {
     }
 }
 
+var preds=[];
 function predictLabels(){
 	// get all data
 	$.ajax({
@@ -242,46 +233,64 @@ function predictLabels(){
 	  	url: "predict.php",
 	  	datatype: "html",
 	  	success: function(data) {
-	  		predictions(data);
-	    	alert("No more predictions ");
+	  		//alert(data);
+	  		window.preds = $.parseJSON(data);
+	    	alert("Done generating predictions");
     	}
 	}) 
 }
 
-var preds;
-function predictions(data){
-	//alert(preds);
-	predicting = true;
-	preds = data;
-	//alert(preds);
-
-}
 
 function showPrediction(){
-	alert(preds);
-	if(preds.length>1){
-		document.getElementById('start').value = predictions[0][0][0];
-		document.getElementById('end').value = predictions[0][4][1];
-		document.getElementById('activity').value = predictions[1][0];
-		preds = preds.slice(1);
+	//alert(preds);
+	var preds = window.preds;
+	//alert(preds);
+	if(preds.length<1){
+		alert("No more predictions available.");
+	}
+	//alert (typeof times[0][0]);
+	//alert (typeof labels);
+	//alert(typeof preds[0]);
+	else{
+		var times = $.parseJSON(preds[0]);
+		var curr_times = $.parseJSON(times[0]);
+		//var curr_times_a = Object.keys(curr_times_o).map(function (key) {return curr_times_o[key]});
+		var labels = $.parseJSON(preds[1]);
+		//alert(typeof curr_times_a);
+		var minTime_u =  Math.min.apply(null,curr_times);
+		var minTime_d = new Date(minTime_u*1000);
+		var minTime_h = '0'+minTime_d.getHours();
+		var minTime_m = '0'+minTime_d.getMinutes();
+		var minTime_s = '0'+minTime_d.getSeconds();
+		var minTime = minTime_h.substr(-2) + ":" + minTime_m.substr(-2) + ":" + minTime_s.substr(-2);
+
+		var maxTime_u = Math.max.apply(null,curr_times);
+		var maxTime_d = new Date(maxTime_u*1000);
+		var maxTime_h = '0'+maxTime_d.getHours();
+		var maxTime_m = '0'+maxTime_d.getMinutes();
+		var maxTime_s = '0'+maxTime_d.getSeconds();
+		var maxTime = maxTime_h.substr(-2) + ":" + maxTime_m.substr(-2) + ":" + maxTime_s.substr(-2);
+
+		document.getElementById('start').value = minTime;
+		document.getElementById('end').value = maxTime;
+		document.getElementById('activity').value = labels[0];
+		
+		if (labels.length==1){
+			window.preds=[];
+		}
+		else{
+			var time = JSON.stringify(times.slice(1));
+			var labs = JSON.stringify(labels.slice(1));
+			window.preds = JSON.stringify([time,labs]);
+		}
 
 	}
-	else if (preds.length==1){
-		document.getElementById('start').value = predictions[0][0][0];
-		document.getElementById('end').value = predictions[0][4][1];
-		document.getElementById('activity').value = predictions[1][0];
-		preds=array();
-	}
-	else{
-		alert("No more predictions available");
-		predicting=false;
-	}
+	
 	
 }
 
 
 window.onload=checkReloading;
-window.onload=checkPredictions;
 
 	</script>
 	<?php session_write_close() ?>
@@ -320,7 +329,7 @@ window.onload=checkPredictions;
 		<p class="select-submit">
       <button type="save" class="save-button" id="save">Save</button>
       <p class="select-submit">
-      <button type="save" class="save-button" id="prediction" onclick="showPrediction()" disabled>Next Prediction</button>
+      <button type="button" class="save-button" id="prediction" onclick="showPrediction()">Next Prediction</button>
 			</form>
 			<p class="select-submit" >
       <button type="predict" class="save-button" id="predict" onclick="predictLabels()">Predict Labels</button>      

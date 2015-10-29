@@ -15,6 +15,10 @@
 	<script type="text/javascript">
 
 	
+	var plot; 
+	var labelPlot;
+	var reloading;
+	var preds=[];
 
 	$(function() {
 
@@ -42,9 +46,9 @@
 				
 			}
 
-			d.push({label:'x', color:1, data: dx});
-			d.push({label:'y', color:2, data: dy});
-			d.push({label:'z', color:3, data: dz});
+			d.push({label:'x', color:'red', data: dx});
+			d.push({label:'y', color:'green', data: dy});
+			d.push({label:'z', color:'blue', data: dz});
 		
 			return d;
 		}
@@ -56,31 +60,67 @@
 			var dactive_high = [];
 			var dinactive = [];
 			var dfinal = [];
-
+			var hasActive = false;
+			var hasInactive = false;
 
 			for (var x = 0;  x< d2.length; x++) {
 				
 				var d = [];
+				var col = 'pink';
+				
+			// 	if(Date(d2[x][0])>=Date(x1) && Date(d2[x][1])<=Date(x2)){
+					
+			// 		if(d3[x]=='active'){
+			// 			dactive_high.push([new Date(d2[x][0]).getTime(),0]);
+			// 			dactive_high.push([new Date(d2[x][1]).getTime(),0]);
+			// 		}
+			// 		else{
+			// 			dinactive.push([new Date(d2[x][0]).getTime(),0]);
+			// 			dinactive.push([new Date(d2[x][1]).getTime(),0]);
+			// 		}
+					
+			// 	}
+				
+			// }
 
-				if(Date(d2[x][0])>=Date(x1) && Date(d2[x][1])<=Date(x2)){
+					if(Date(d2[x][0])>=Date(x1) && Date(d2[x][1])<=Date(x2)){
 					
-					if(d3[x]=='active'){
-						dactive_high.push([new Date(d2[x][0]).getTime(),0]);
-						dactive_high.push([new Date(d2[x][1]).getTime(),0]);
-					}
-					else{
-						dinactive.push([new Date(d2[x][0]).getTime(),0]);
-						dinactive.push([new Date(d2[x][1]).getTime(),0]);
-					}
 					
+						d.push([new Date(d2[x][0]).getTime(),0]);
+						d.push([new Date(d2[x][1]).getTime(),0]);
+
+						if (d3[x]=='active'){
+							col = 'purple'
+							if (!hasActive){
+								dfinal.push({label:d3[x], color:col, data: d});
+								hasActive=true;
+							}
+							else{
+								dfinal.push({color:col, data: d});
+					
+							}
+						}
+
+						else{
+							if (!hasInactive){
+								dfinal.push({label:d3[x], color:col, data: d});
+								hasInactive=true;
+							}
+							else{
+								dfinal.push({color:col, data:d});
+							}
+						}
+						
+						
+						
 				}
 				
 			}
 
 			//dfinal.push({label:'low activity', color:4, data: dactive_low});
-			dfinal.push({label:'active', color:5, data: dactive_high});
+				//dfinal.push({label:'active', color:'purple', data: dactive_high});
 			//dfinal.push({label:'high activity', color:6, data: dactive_high});
-			dfinal.push({label: 'inactive', color:7, data:dinactive});
+				//dfinal.push({label: 'inactive', color:'pink', data:dinactive});
 			
 
 			return dfinal;
@@ -109,12 +149,14 @@
 					show: true
 				},
 				points: {
-					show: true
+					show: false
 				}
 			},
 			xaxis: {
 				mode: "time",
-				timezone: "browser"
+				timezone: "browser",
+				min: startData[0].data[0][0],
+				max: startData[0].data[startData[0].data.length-1][0]
 			},
 			selection: {
 				mode: "x"
@@ -122,10 +164,10 @@
 		};
 
 			 
-		var plot = $.plot("#placeholder", startData, options);
+		window.plot = $.plot("#placeholder", startData, options);
 
 		
-		var labelPlot = $.plot("#labels", startLabels , 
+		window.labelPlot = $.plot("#labels", startLabels , 
 		{
 			legend:{
 				show: true,
@@ -133,15 +175,17 @@
 			},
 			series:{
 				lines: {
-					show:false
+					show:true
 				},
 				points: {
-					show: true	
+					show: false	
 				}
 			},
 			xaxis: {
 				mode: "time",
-				timezone: "browser"
+				timezone: "browser",
+				min: startData[0].data[0][0],
+				max: startData[0].data[startData[0].data.length-1][0]
 			},
 			yaxis: {
 				show:false
@@ -152,7 +196,7 @@
 		}
 			);
 
-		
+			
 		// Select to create label
 		$("#placeholder").bind("plotselected", function (event, ranges) {
 			var start = new Date(ranges.xaxis.from);
@@ -176,6 +220,8 @@
 
 			document.getElementById('start').value = startTime;
 			document.getElementById('end').value = endTime;
+
+			window.labelPlot.setSelection(ranges, true);
 			
 		});
 		
@@ -183,10 +229,28 @@
 
 		$("#labels").bind("plotselected", function (event, ranges) {
 
-			// don't fire event on the overview to prevent eternal loop
+			var start = new Date(ranges.xaxis.from);
+			var end = new Date (ranges.xaxis.to);
 
-			//overview.setSelection(ranges, true);
-			plot.setSelection(ranges), true;
+			var sHours = "0"+start.getHours();
+			
+			var sMinutes = "0"+start.getMinutes();
+			
+			var sSeconds = "0"+start.getSeconds();
+			
+			var eHours = "0"+end.getHours();
+			
+			var eMinutes = "0"+end.getMinutes();
+			
+			var eSeconds = "0"+end.getSeconds();
+			
+			var startTime = sHours.substr(-2) + ":" + sMinutes.substr(-2) + ":" + sSeconds.substr(-2);
+			var endTime = eHours.substr(-2) +  ":" + eMinutes.substr(-2) + ":" + eSeconds.substr(-2);
+			
+
+			document.getElementById('start').value = startTime;
+			document.getElementById('end').value = endTime;
+			window.plot.setSelection(ranges, true);
 		});
 
 		// Add the Flot version string to the footer
@@ -196,7 +260,7 @@
 
 	
 
-var reloading;
+
 
 function checkReloading() {
     if (window.location.hash=="#autoreload") {
@@ -225,7 +289,21 @@ function toggleAutoRefresh(cb) {
     }
 }
 
-var preds=[];
+function clearLabels(){
+	$.ajax({
+	  	type: "POST",
+	  	url: "clear.php",
+	  	datatype: "html",
+	  	success: function(data) {
+	  		alert(JSON.stringify(data));
+	  		location.reload();
+	    	;
+    	}
+	}) 
+}
+
+
+
 function predictLabels(){
 	// get all data
 	$.ajax({
@@ -243,30 +321,31 @@ function predictLabels(){
 
 function showPrediction(){
 	//alert(preds);
-	var preds = window.preds;
+	//var preds = window.preds;
 	//alert(preds);
-	if(preds.length<1){
+	//alert(window.preds);
+	if(window.preds.length<1){
 		alert("No more predictions available.");
 	}
-	//alert (typeof times[0][0]);
-	//alert (typeof labels);
-	//alert(typeof preds[0]);
+
 	else{
 		var times = $.parseJSON(preds[0]);
 		var curr_times = $.parseJSON(times[0]);
-		//var curr_times_a = Object.keys(curr_times_o).map(function (key) {return curr_times_o[key]});
+		
 		var labels = $.parseJSON(preds[1]);
-		//alert(typeof curr_times_a);
+		
 		var minTime_u =  Math.min.apply(null,curr_times);
 		var minTime_d = new Date(minTime_u*1000);
-		var minTime_h = '0'+minTime_d.getHours();
+		var minTime_h_old = minTime_d.getHours()-2;//php does weird timezone things (doesn't recognize Central), so doing this hack for now
+		var minTime_h = '0'+minTime_h_old;
 		var minTime_m = '0'+minTime_d.getMinutes();
 		var minTime_s = '0'+minTime_d.getSeconds();
 		var minTime = minTime_h.substr(-2) + ":" + minTime_m.substr(-2) + ":" + minTime_s.substr(-2);
 
 		var maxTime_u = Math.max.apply(null,curr_times);
 		var maxTime_d = new Date(maxTime_u*1000);
-		var maxTime_h = '0'+maxTime_d.getHours();
+		var maxTime_h_old = maxTime_d.getHours()-2; //php does weird timezone things (doesn't recognize Central), so doing this hack for now
+		var maxTime_h = '0'+maxTime_h_old;
 		var maxTime_m = '0'+maxTime_d.getMinutes();
 		var maxTime_s = '0'+maxTime_d.getSeconds();
 		var maxTime = maxTime_h.substr(-2) + ":" + maxTime_m.substr(-2) + ":" + maxTime_s.substr(-2);
@@ -274,14 +353,24 @@ function showPrediction(){
 		document.getElementById('start').value = minTime;
 		document.getElementById('end').value = maxTime;
 		document.getElementById('activity').value = labels[0];
-		
+
+
+		window.plot.setSelection({
+				xaxis: {
+					from: minTime_u,
+					to: maxTime_u
+				}
+			});
+
+
 		if (labels.length==1){
 			window.preds=[];
 		}
 		else{
+
 			var time = JSON.stringify(times.slice(1));
 			var labs = JSON.stringify(labels.slice(1));
-			window.preds = JSON.stringify([time,labs]);
+			window.preds = [time,labs];
 		}
 
 	}
@@ -333,6 +422,8 @@ window.onload=checkReloading;
 			</form>
 			<p class="select-submit" >
       <button type="predict" class="save-button" id="predict" onclick="predictLabels()">Predict Labels</button>      
+			<p class="select-submit">
+		<button type="cleardata" class="save-button" id="cleardata" onclick="clearLabels()">Clear Labels</button>      
 			</div>
 		</div>
 		

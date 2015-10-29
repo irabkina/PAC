@@ -8,7 +8,7 @@ def main(argv):
 	inactive = "inactive"
 	active = "active"
 	#print "inside python script"
-	label_prop_model = LabelSpreading(alpha=0.8, tol=0.7, gamma=0.5)
+	label_prop_model = LabelSpreading(alpha=0.8, tol=0.7, gamma=0.5, max_iter=10)
 	
 	#TODO: test json decoding and argv index
 	#print "\n data_pre: " + json.loads(argv[0])[0]
@@ -67,7 +67,7 @@ def main(argv):
 			xl.append(raw[0])
 			yl.append(raw[1])
 			zl.append(raw[2])
-			dats = [numpy.mean(xl), numpy.mean(yl), numpy.mean(zl),numpy.std(xl),numpy.std(yl),numpy.std(zl)]
+			dats = [numpy.std(xl),numpy.std(yl),numpy.std(zl)]
 		#print "assigning data_post " + str(tup)
 		data_post[tup] = dats
 

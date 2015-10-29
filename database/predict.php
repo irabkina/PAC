@@ -17,7 +17,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	} 
 
 	$patid = $_SESSION['patid'];
-	$datasetId = 1; //currently not functional
+	$datasetId = 51; //currently not functional
 
 	// table names for queries
 	
@@ -86,6 +86,7 @@ $dbHost = "us-cdbr-azure-central-a.cloudapp.net";
 	$output = shell_exec(escapeshellcmd($command). ' 2>&1');
 
 	//print_r($output);
+	$_SESSION['preds'] = $output;
 	echo $output;
 	//print_r("Prediction complete. Suggestions will appear in labeling box.");
 	//return $output;
